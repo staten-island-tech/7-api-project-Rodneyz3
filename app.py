@@ -14,5 +14,23 @@ def getPoke(poke):
         "types": [t["type"]["name"] for t in data["types"]]
     }
 
-pokemon = getPoke("raichu")
+pokemon = getPoke("Arceus")
 print(pokemon)
+
+
+import requests
+
+def spoon(reciple):
+    response = requests.get(f"https://api.spoonacular.com/recipes/complexSearch?query=pizza&apiKey=17b0dfdac1e6454d9f3bc9e4cb27b568{reciple.lower()}")
+    if response.status_code != 200:
+        print("Error fetching data!")
+        return None
+
+    data = response.json()
+    return {
+        "id": data["id"]
+    }
+
+food = spoon("Pesto Veggie Pizza.")
+print(food)
+    
