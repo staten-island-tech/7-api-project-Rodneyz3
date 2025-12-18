@@ -1,16 +1,32 @@
+import tkinter as tk
+tk.geometry(400,200)
+
+
+
 import requests
-#project where user types animals common name to get scientific name
+
 def api():
     url = "https://aes.shenlu.me/api/v1/species"
-    response=requests.get(url)
+    response = requests.get(url)
+
     if response.status_code != 200:
         print("Error fetching data!")
-        return None
-    user=input("think of a common animal:")
+        return
+
+    user = input("Write a common name ").lower()
     data = response.json()
-    for i in data():
-        if user in data[i]["common_name"] or user == data[i]["common_name"]:
-            print(data[i]["scientific_name"])
+
+    found = False
+
+    for species in data: 
+        common_name = species.get("common_name", "").lower()
+
+        if user == common_name:
+            print("Scientific name:", species.get("scientific_name"))
+            found = True
+            break
+
+    if not found:
+        print("Animal not found.")
 
 api()
-    
