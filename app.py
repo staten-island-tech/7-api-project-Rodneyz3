@@ -1,4 +1,4 @@
-
+import tkinter as tk
 import requests
 
 def api():
@@ -18,7 +18,7 @@ def api():
         print(animal["common_name"])
     found = False
 
-    user = input("Write a common name from the list:").lower()
+    user = input("Write a common name from the list to turn into scientific names:").lower()
 
    
 
@@ -33,4 +33,18 @@ def api():
     if not found:
         print("Animal not found.")
 
-api()
+
+
+
+
+root = tk.Tk()
+root.title("common to scientific")
+
+btn = tk.Button(root, text="names", command=api)
+btn.pack(pady=10)
+
+
+fact_label = tk.Label(root, text="", wraplength=250)
+fact_label.pack(pady=10)
+
+root.mainloop()
