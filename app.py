@@ -1,6 +1,3 @@
-
-
-
 import tkinter as tk
 import requests
 
@@ -18,7 +15,7 @@ def api():
    
     for species in data:
         if user_choice == species.get("common_name", "").lower():
-            fact_label.config(f"Scientific: {species.get('scientific_name')}")
+            fact_label.config(text=f"Scientific: {species.get('scientific_name')}")
             return
 
 
@@ -47,3 +44,4 @@ fact_label.pack(pady=10)
 
 
 root.mainloop()
+
