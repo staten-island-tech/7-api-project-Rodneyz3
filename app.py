@@ -1,50 +1,49 @@
+
+
+
 import tkinter as tk
 import requests
 
+
 def api():
     url = "https://aes.shenlu.me/api/v1/species"
-    response = requests.get(url)
+    data = requests.get(url).json()
 
-    if response.status_code != 200:
-        print("Error fetching data!")
-        return
-    
-    
-
-    
-    data = response.json()
 
     for animal in data:
         print(animal["common_name"])
-    found = False
 
-    user = input("Write a common name from the list to turn into scientific names:").lower()
 
+    user_choice = name_entry.get().lower()
    
+    for species in data:
+        if user_choice == species.get("common_name", "").lower():
+            fact_label.config(f"Scientific: {species.get('scientific_name')}")
+            return
 
-    for species in data: 
-        common_name = species.get("common_name", "").lower()
 
-        if user == common_name:
-            print("Scientific name:", species.get("scientific_name"))
-            found = True
-            break
-
-    if not found:
-        print("Animal not found.")
-
+    fact_label.config(text="Not found")
 
 
 
 
 root = tk.Tk()
-root.title("common to scientific")
+root.title("Converter")
 
-btn = tk.Button(root, text="names", command=api)
+
+tk.Label(root, text="Type name from terminal:").pack(pady=5)
+
+
+name_entry = tk.Entry(root)
+name_entry.pack(pady=5)
+
+
+btn = tk.Button(root, text="Convert & Print List", command=api)
 btn.pack(pady=10)
 
 
-fact_label = tk.Label(root, text="", wraplength=250)
+fact_label = tk.Label(root, text="")
 fact_label.pack(pady=10)
+
 
 root.mainloop()
