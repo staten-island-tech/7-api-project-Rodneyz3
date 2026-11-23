@@ -1,3 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NBA</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>NBA FIGURINE STORE</h1>
+    <div class ="filter-button">
+      <button id="btn-all">All Players</button>
+      <button id="btn-allstar">All-Stars</button>
+      <button id="btn-not-allstar">Non-All-Stars</button>
+      <button id="btn-pg">PG</button>
+      <button id="btn-sg">SG</button>
+      <button id="btn-sf">SF</button>
+      <button id="btn-pf">PF</button>
+      <button id="btn-c">C</button>
+
+
+    </div>
+  </header>
+ 
+  <main class="store-layout">
+    <div class="container">
+      <!-- <div class="card">
+      <h1>player</h1>
+      <p>Team: team name</p>
+      <p>Position: position</p>
+      <p>PPG: #</p>
+      <p>Price: $</p>
+      <p>Stock: #</p>
+      <p>IsAllStar: #</p>
+      <img src="image.jpg" alt="player image">
+      <button class="add-btn">Add to Cart</button>
+      </div> -->
+      </div>
+
+
+    <section class="cart-selection">
+      <h2>Shopping Cart</h2>
+      <div id="cart-item">
+        <p class="empty-cart">Cart is empty.</p>
+      </div>
+
+
+      <div class="discount-box">
+        <label for="discount-input">Discount code:</label>
+        <form class="discount-row">
+          <input type="text" id="discount-input">
+          <button type="submit" id="apply-discount-btn">Apply</button>
+        </form>
+        <p id="discount-msg"></p>
+      </div>
+      <div class="cart-totals">
+        <p id="subtotal-price">Subtotal: $0.00</p>
+        <p id="discount-amount">Discount: -$0.00</p>
+        <h3 id="total-price">Total: $0.00</h3>
+      </div>
+    </section>
+ 
+  </main>
+
+
+  <script src="js.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const figurine = [
   {
     Name: "Anthony Edwards",
@@ -201,12 +298,10 @@ const figurine = [
   },
 ];
 
-
-
 const container = document.querySelector(".container");
 const cartContainer = document.querySelector("#cart-item");
-const subtotalEl = document.querySelector("#subtotal-price");
-const discountEl = document.querySelector("#discount-amount");
+const subtotal = document.querySelector("#subtotal-price");
+const discount = document.querySelector("#discount-amount");
 const totalEl = document.querySelector("#total-price");
 
 let cart = {};
@@ -215,7 +310,7 @@ let discountPercent = 0;
 function inject(item, index) {
   container.insertAdjacentHTML(
     "beforeend",
-    `<div class="card" data-item="${index}">
+    `<div class="card">
       <h1>${item.Name}</h1>
       <p>Team: ${item.Team}</p>
       <p>Position: ${item.Position}</p>
@@ -225,7 +320,7 @@ function inject(item, index) {
       <p>IsAllStar: ${item.IsAllStar}</p>
       <img src="${item.img}" alt="${item.Name}">
       <button class="add-btn" data-index="${index}">Add to Cart</button>
-    </div>`
+    </div>`,
   );
 }
 
@@ -283,15 +378,14 @@ function renderCart() {
     cartContainer.insertAdjacentHTML(
       "beforeend",
       `<div class="cart-row">
-        <p><strong>${item.Name}</strong> - $${item.Price.toFixed(2)} x ${qty} ($${itemTotal.toFixed(2)})</p>
+        <p>${item.Name} - $${item.Price.toFixed(2)} x ${qty} ($${itemTotal.toFixed(2)})</p>
         <div class="cart-controls">
           <button class="remove-btn" data-index="${index}">-</button>
           <button class="plus-btn" data-index="${index}">+</button>
         </div>
-      </div>`
+      </div>`,
     );
   });
-
 
   document.querySelectorAll(".remove-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -308,14 +402,15 @@ function renderCart() {
   updateTotals(subtotal);
 }
 
-function updateTotals(subtotal) {
-  const discountAmount = subtotal * (discountPercent / 100);
-  const total = subtotal - discountAmount;
+function updateTotals(Amount) {
+  const discountAmount = Amount * (discountPercent / 100);
+  const total = Amount - discountAmount;
 
-  subtotalEl.textContent = `Subtotal: $${subtotal.toFixed(2)}`;
-  discountEl.textContent = `Discount: -$${discountAmount.toFixed(2)}`;
+  subtotal.textContent = `Subtotal: $${Amount.toFixed(2)}`;
+  discount.textContent = `Discount: -$${discountAmount.toFixed(2)}`;
   totalEl.textContent = `Total: $${total.toFixed(2)}`;
 }
+
 
 function showItems(list) {
   container.innerHTML = "";
@@ -327,3 +422,67 @@ function showItems(list) {
 }
 
 showItems(figurine);
+
+
+document.querySelector("form").addEventListener("submit", function (event) {
+  event.preventDefault();
+  let x = document.querySelector("#discount-input");
+  let msg = document.querySelector("#discount-msg");
+  let code = x.value.trim().toLowerCase();
+
+  if (code === "save10") {
+    discountPercent = 10;
+    msg.textContent = "10% discount applied!";
+  } else if (code === "save20") {
+    discountPercent = 20;
+    msg.textContent = "20% discount applied!";
+  } else if (code === "save50") {
+    discountPercent = 50;
+    msg.textContent = "50% discount applied!";
+  } else {
+    discountPercent = 0;
+    msg.textContent = "Invalid discount code.";
+  }
+
+  x.value = "";
+  renderCart();
+});
+
+document.querySelector("#btn-all").addEventListener("click", () => {
+  showItems(figurine);
+});
+
+document.querySelector("#btn-allstar").addEventListener("click", () => {
+  const filtered = figurine.filter((item) => item.IsAllStar === true);
+  showItems(filtered);
+});
+
+document.querySelector("#btn-not-allstar").addEventListener("click", () => {
+  const filtered = figurine.filter((item) => item.IsAllStar === false);
+  showItems(filtered);
+});
+
+document.querySelector("#btn-pg").addEventListener("click", () => {
+  const filtered = figurine.filter((item) => item.Position === "PG");
+  showItems(filtered);
+});
+
+document.querySelector("#btn-sg").addEventListener("click", () => {
+  const filtered = figurine.filter((item) => item.Position === "SG");
+  showItems(filtered);
+});
+
+document.querySelector("#btn-sf").addEventListener("click", () => {
+  const filtered = figurine.filter((item) => item.Position === "SF");
+  showItems(filtered);
+});
+
+document.querySelector("#btn-pf").addEventListener("click", () => {
+  const filtered = figurine.filter((item) => item.Position === "PF");
+  showItems(filtered);
+});
+
+document.querySelector("#btn-c").addEventListener("click", () => {
+  const filtered = figurine.filter((item) => item.Position === "C");
+  showItems(filtered);
+});
