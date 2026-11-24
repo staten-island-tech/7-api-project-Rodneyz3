@@ -1,100 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NBA</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>NBA FIGURINE STORE</h1>
-    <div class ="filter-button">
-      <button id="btn-all">All Players</button>
-      <button id="btn-allstar">All-Stars</button>
-      <button id="btn-not-allstar">Non-All-Stars</button>
-      <button id="btn-pg">PG</button>
-      <button id="btn-sg">SG</button>
-      <button id="btn-sf">SF</button>
-      <button id="btn-pf">PF</button>
-      <button id="btn-c">C</button>
-
-
-    </div>
-  </header>
- 
-  <main class="store-layout">
-    <div class="container">
-      <!-- <div class="card">
-      <h1>player</h1>
-      <p>Team: team name</p>
-      <p>Position: position</p>
-      <p>PPG: #</p>
-      <p>Price: $</p>
-      <p>Stock: #</p>
-      <p>IsAllStar: #</p>
-      <img src="image.jpg" alt="player image">
-      <button class="add-btn">Add to Cart</button>
-      </div> -->
-      </div>
-
-
-    <section class="cart-selection">
-      <h2>Shopping Cart</h2>
-      <div id="cart-item">
-        <p class="empty-cart">Cart is empty.</p>
-      </div>
-
-
-      <div class="discount-box">
-        <label for="discount-input">Discount code:</label>
-        <form class="discount-row">
-          <input type="text" id="discount-input">
-          <button type="submit" id="apply-discount-btn">Apply</button>
-        </form>
-        <p id="discount-msg"></p>
-      </div>
-      <div class="cart-totals">
-        <p id="subtotal-price">Subtotal: $0.00</p>
-        <p id="discount-amount">Discount: -$0.00</p>
-        <h3 id="total-price">Total: $0.00</h3>
-      </div>
-    </section>
- 
-  </main>
-
-
-  <script src="js.js"></script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const figurine = [
   {
     Name: "Anthony Edwards",
@@ -307,6 +210,7 @@ const totalEl = document.querySelector("#total-price");
 let cart = {};
 let discountPercent = 0;
 
+
 function inject(item, index) {
   container.insertAdjacentHTML(
     "beforeend",
@@ -328,33 +232,58 @@ function setupCardButtons() {
   const buttons = document.querySelectorAll(".add-btn");
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      const index = btn.getAttribute("data-index");
-      addToCart(index);
+      const M = btn.getAttribute("data-index");
+      addToCart(M);
     });
   });
 }
 
-function addToCart(index) {
-  const item = figurine[index];
-  const currentQty = cart[index] || 0;
+function showItems(list) {
+  container.innerHTML = "";
+  list.forEach((item) => {
+    let ValueForTheIndex = figurine.indexOf(item);
+    inject(item, ValueForTheIndex);
+  });
+  setupCardButtons();
+} 
+// ok so, the list variable is our figurine array, we do 
+// for each, and making each individual object in our array into 
+// item. we then use that item variable(for example name:ja ppg:20 team:...)
+// to make each card one by one. also indexOf is a built in function that 
+// finds each item's position in our figurine arrary( for example
+// ja morant is 1 in out array. We keep track of this so i can add and remove stuff easier)
+
+
+function addToCart(M) {
+  const item = figurine[M];
+  const currentQty = cart[M] || 0;
 
   if (currentQty >= item.Stock) {
     alert(`Only ${item.Stock} of ${item.Name} in stock!`);
     return;
   }
 
-  cart[index] = currentQty + 1;
+  cart[M] = currentQty + 1;
   renderCart();
 }
 
-function removeFromCart(index) {
-  if (!cart[index]) return;
+function removeFromCart(M) {
+  if (!cart[M]) return;
 
-  cart[index] -= 1;
-  if (cart[index] <= 0) {
-    delete cart[index];
+  cart[M] -= 1;
+  if (cart[M] <= 0) {
+    delete cart[M];
   }
   renderCart();
+}
+
+function updateTotals(Amount) {
+  const discountAmount = Amount * (discountPercent / 100);
+  const total = Amount - discountAmount;
+
+  subtotal.textContent = `Subtotal: $${Amount.toFixed(2)}`;
+  discount.textContent = `Discount: -$${discountAmount.toFixed(2)}`;
+  totalEl.textContent = `Total: $${total.toFixed(2)}`;
 }
 
 function renderCart() {
@@ -369,9 +298,9 @@ function renderCart() {
 
   let subtotal = 0;
 
-  cartKeys.forEach((index) => {
-    const item = figurine[index];
-    const qty = cart[index];
+  cartKeys.forEach((M) => {
+    const item = figurine[M];
+    const qty = cart[M];
     const itemTotal = item.Price * qty;
     subtotal += itemTotal;
 
@@ -380,8 +309,8 @@ function renderCart() {
       `<div class="cart-row">
         <p>${item.Name} - $${item.Price.toFixed(2)} x ${qty} ($${itemTotal.toFixed(2)})</p>
         <div class="cart-controls">
-          <button class="remove-btn" data-index="${index}">-</button>
-          <button class="plus-btn" data-index="${index}">+</button>
+          <button class="remove-btn" data-index="${M}">-</button>
+          <button class="plus-btn" data-index="${M}">+</button>
         </div>
       </div>`,
     );
@@ -402,24 +331,6 @@ function renderCart() {
   updateTotals(subtotal);
 }
 
-function updateTotals(Amount) {
-  const discountAmount = Amount * (discountPercent / 100);
-  const total = Amount - discountAmount;
-
-  subtotal.textContent = `Subtotal: $${Amount.toFixed(2)}`;
-  discount.textContent = `Discount: -$${discountAmount.toFixed(2)}`;
-  totalEl.textContent = `Total: $${total.toFixed(2)}`;
-}
-
-
-function showItems(list) {
-  container.innerHTML = "";
-  list.forEach((item) => {
-    let original = figurine.indexOf(item);
-    inject(item, original);
-  });
-  setupCardButtons();
-}
 
 showItems(figurine);
 
